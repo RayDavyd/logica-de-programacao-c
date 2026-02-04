@@ -1,32 +1,59 @@
-/*Escreva um programa em C que leia o gabarito de uma prova objetiva de dez questões e, em seguida, leia o cartão de respostas de dez candidatos. Para cada candidato o programa deve informar a quantidade de acertos. O programa deve ter um subprograma que receba como parâmetro um vetor de dez caracteres e faça a leitura e preenchimento desse vetor. Esse subprograma deve ser usado tanto para a leitura do gabarito quanto do cartão de resposta de cada candidato. O programa também deve ter um subprograma que receba como parâmetros dois vetores de dez caracteres e verifique quantas posições eles têm em comum. Esse subprograma deve ser usado para computar a quantidade de acertos de cada um dos candidatos.*/
-#include<stdio.h>
-const int QUANTIDADE = 10;
+#include <stdio.h>
 
-void lerVetor(char vet[QUANTIDADE]){
-    for(int i = 0; i < QUANTIDADE; i++){
-        printf("Informe um numero: ");
-        scanf(" %c", &vet[i]);
+const int NUM_QUESTOES = 10;
+const int NUM_CANDIDATOS = 10;
+
+// Subprograma 1: Leitura (Serve para Gabarito e Aluno)
+// Recebe o vetor onde os dados serão salvos
+void lerRespostas(char vetor[NUM_QUESTOES]) {
+    for (int i = 0; i < NUM_QUESTOES; i++) {
+        printf("   Questao %d: ", i + 1);
+        // O espaço antes do %c é vital para limpar o buffer do teclado
+        scanf(" %c", &vetor[i]);
     }
 }
 
-int verificarGabarito(char vetcr[QUANTIDADE], char vetgb[QUANTIDADE]){
-    int  contador = 0;
-    for(int i = 0; i < QUANTIDADE; i++){
-        if(vetcr[i] == vetgb[i]){
-            contador++;
+// Subprograma 2: Comparação
+// Retorna o número de acertos
+int calcularAcertos(char respostas_aluno[NUM_QUESTOES], char gabarito_oficial[NUM_QUESTOES]) {
+    int acertos = 0;
+    for (int i = 0; i < NUM_QUESTOES; i++) {
+        // Se a resposta do aluno for igual ao gabarito, soma ponto
+        if (respostas_aluno[i] == gabarito_oficial[i]) {
+            acertos++;
         }
     }
-    return contador;
+    return acertos;
 }
 
-int main(){
-    char vetcr[QUANTIDADE], vetgb[QUANTIDADE];
-    printf("Informe o cartao resposta da prova: \n");
-    lerVetor(vetcr);
-    for(int i = 1; i <= QUANTIDADE; i++){
-        printf("Informe o gabarito do candidato %d\n", i);
-        lerVetor(vetgb);    
-        printf("O candidato %d acertou %d questoes\n", i, verificarGabarito(vetcr, vetgb));
+int main() {
+    // Declaração dos vetores usando a constante
+    char gabarito[NUM_QUESTOES];
+    char cartao_aluno[NUM_QUESTOES];
+
+    // --- 1. Leitura do Gabarito Mestre ---
+    printf("\n===================================\n");
+    printf("   CADASTRO DO GABARITO OFICIAL    \n");
+    printf("===================================\n");
+    lerRespostas(gabarito);
+
+    // --- 2. Loop para ler e corrigir os 10 candidatos ---
+    printf("\n===================================\n");
+    printf("      CORRECAO DOS CANDIDATOS      \n");
+    printf("===================================\n");
+
+    for (int i = 1; i <= NUM_CANDIDATOS; i++) {
+        printf("\n--> Candidato %d:\n", i);
+        
+        // Lê as respostas deste aluno específico (sobrescreve o anterior)
+        lerRespostas(cartao_aluno);
+        
+        // Calcula a nota comparando o cartão atual com o gabarito fixo
+        int nota = calcularAcertos(cartao_aluno, gabarito);
+        
+        printf("\n[RESULTADO] O candidato %d acertou %d questoes.\n", i, nota);
+        printf("-----------------------------------\n");
     }
+
     return 0;
 }
